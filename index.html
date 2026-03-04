@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Choose Your House!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0b1120;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1rem;
+    }
+    .card {
+      background: #111827;
+      border-radius: 12px;
+      padding: 1.5rem;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    h1 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 0.25rem;
+    }
+    p.subtitle {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+      color: #d1d5db;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      margin-bottom: 0.9rem;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    button {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #f97316, #eab308);
+      color: #111827;
+      margin-top: 0.3rem;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    .message {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    .message.success {
+      color: #22c55e;
+    }
+    .message.error {
+      color: #f97316;
+    }
+    small.hint {
+      display: block;
+      margin-top: -0.4rem;
+      margin-bottom: 0.9rem;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Choose Your House</h1>
+    <p class="subtitle">
+      Pick your house and guess how many people will choose it today.
+    </p>
+
+    <form id="house-form" novalidate>
+      <label for="gmail">Your Gmail ID (required)</label>
+      <input
+        type="email"
+        id="gmail"
+        name="gmail"
+        required
+        placeholder="example@gmail.com"
+      >
+      <small class="hint">
+        Used to identify winners. One entry per Gmail ID.
+      </small>
+
+      <label for="name">Name (optional)</label>
+      <input type="text" id="name" name="name" placeholder="Your name">
+
+      <label for="house">Your House</label>
+      <select id="house" name="house" required>
+        <option value="">Select your house</option>
+        <option value="Gryffindor">Gryffindor</option>
+        <option value="Slytherin">Slytherin</option>
+        <option value="Ravenclaw">Ravenclaw</option>
+        <option value="Hufflepuff">Hufflepuff</option>
+      </select>
+
+      <label for="guess">Your guess for today</label>
+      <input
+        type="number"
+        id="guess"
+        name="guess"
+        min="1"
+        max="1000"
+        required
+        placeholder="How many people will choose this house?"
+      >
+      <small class="hint">
+        Think about what others will pick, not just your favourite house.
+      </small>
+
+      <button type="submit" id="submit-btn">Submit</button>
+
+      <div id="message" class="message" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvno4sxZbFccn1HYTeJZKyClxRpzfKiud5vD5f4DGpjdLCU0K6O5lVJcUGXxzXmIkvhw/exec"; // paste Apps Script URL
+
+    const form = document.getElementById("house-form");
+    const messageEl = document.getElementById("message");
+    const submitBtn = document.getElementById("submit-btn");
+    const gmailInput = document.getElementById("gmail");
+
+    function isValidGmail(value) {
+      const trimmed = value.trim();
+      const pattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+      return pattern.test(trimmed);
+    }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      messageEl.textContent = "";
+      messageEl.className = "message";
+
+      // Front-end validation for Gmail
+      const gmailValue = gmailInput.value;
+      if (!isValidGmail(gmailValue)) {
+        messageEl.textContent = "Please enter a valid @gmail.com address.";
+        messageEl.className = "message error";
+        gmailInput.focus();
+        return;
+      }
+
+      // Basic HTML5 validation for other fields
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting...";
+
+      const formData = new FormData(form);
+
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: formData
+      })
+        .then(async (res) => {
+          let text;
+          try {
+            text = await res.text();
+            const data = JSON.parse(text);
+            if (data.status === "success") {
+              messageEl.textContent = data.message || "Your choice has been recorded. Good luck!";
+              messageEl.className = "message success";
+              form.reset();
+            } else {
+              messageEl.textContent = data.message || "We already have an entry from this Gmail ID.";
+              messageEl.className = "message error";
+            }
+          } catch (e) {
+            // Fallback if response not JSON (e.g., due to no-cors)
+            messageEl.textContent = "Your choice has been recorded (fallback).";
+            messageEl.className = "message success";
+            form.reset();
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          messageEl.textContent = "Something went wrong. Please try again.";
+          messageEl.className = "message error";
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Submit";
+        });
+    });
+  </script>
+</body>
+</html>
