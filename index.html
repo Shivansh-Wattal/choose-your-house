@@ -11,6 +11,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
+    @font-face {
+  font-family: 'HarryP';
+  src: url('assets/harryp.woff2') format('woff2');
+  font-display: swap;
+}
     :root{
   --bg1:#05050a;   /* near-black */
   --bg2:#0a0a14;   /* near-black with tiny blue */
@@ -56,30 +61,74 @@
       margin: 0 auto;
     }
 
-    header{
-      text-align:center;
-      margin: 10px 0 26px;
-    }
+    header {
+  text-align: center;
+  margin: 10px 0 36px;
+  position: relative;
+}
 
-    h1{
-      margin:0;
-      font-size: clamp(2.1rem, 5.2vw, 3.8rem);
-      letter-spacing: 0.06em;
-      font-weight: 700;
-      background: linear-gradient(180deg, var(--gold1), var(--gold2));
-      -webkit-background-clip:text;
-      background-clip:text;
-      color: transparent;
-      text-shadow: 0 2px 12px rgba(255,215,120,0.18);
-    }
+  header::after {
+  content: "⁕ ────────── ✦ ────────── ⁕";
+  display: block;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  color: rgba(247, 211, 106, 0.45);
+  font-family: 'Cinzel', serif;
+}
 
-    .sub{
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 0.95rem;
-      letter-spacing: 0.02em;
-      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
-    }
+
+
+    h1 {
+  margin: 0;
+  font-family: 'HarryP', serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-family: 'Cinzel', serif;
+
+  /* Layered gold gradient like movie posters */
+  background: linear-gradient(
+    180deg,
+    #fff8dc 0%,
+    #f7d36a 20%,
+    #d4a017 45%,
+    #f7d36a 55%,
+    #8b6914 75%,
+    #f7d36a 90%,
+    #caa03a 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  /* Cinematic deep glow */
+  filter: drop-shadow(0 0 8px rgba(255, 210, 60, 0.55))
+          drop-shadow(0 0 24px rgba(255, 160, 0, 0.30))
+          drop-shadow(0 4px 6px rgba(0, 0, 0, 0.8));
+
+  /* Shimmer animation */
+  background-size: 200% auto;
+  animation: shimmer 4s linear infinite;
+  position: relative;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+
+    .sub {
+  margin-top: 6px;
+  color: rgba(239, 231, 210, 0.65);
+  font-size: 0.9rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-family: 'Cinzel', serif;
+}
+
 
     .grid{
       display:grid;
