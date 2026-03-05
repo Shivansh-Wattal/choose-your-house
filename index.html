@@ -56,6 +56,24 @@
       mix-blend-mode: overlay;
     }
 
+    body::after {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(600px, 90vw);
+  height: min(600px, 90vw);
+  background-image: url('assets/hogwarts.jpeg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.06;        /* very faint — increase to 0.10 if too faint */
+  pointer-events: none;
+  z-index: 0;
+}
+
+
     .wrap{
       max-width: 1100px;
       margin: 0 auto;
@@ -65,7 +83,9 @@
   text-align: center;
   margin: 10px 0 36px;
   position: relative;
+  z-index: 1;           /* ← add this */
 }
+
 
   header::after {
   content: "⁕ ────────── ✦ ────────── ⁕";
@@ -129,12 +149,15 @@
 }
 
 
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 18px;
-      align-items: stretch;
-    }
+    .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  align-items: stretch;
+  position: relative;
+  z-index: 1;           /* ← add this */
+}
+
 
     .card{
       height: 420px;
