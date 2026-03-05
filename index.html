@@ -473,7 +473,6 @@
     <p class="ty-house" id="ty-house-name"></p>
     <p class="ty-msg">Your guess has been submitted.<br>May the best wizard win!</p>
     <div class="ty-divider">⁕ ────── ✦ ────── ⁕</div>
-    <button class="ty-btn" onclick="closeOverlay()">Back to Houses</button>
   </div>
 </div>
 
@@ -667,11 +666,6 @@
     document.body.style.overflow = 'hidden';
   }
 
-  function closeOverlay() {
-    document.getElementById('thankyou-overlay').style.display = 'none';
-    document.body.style.overflow = '';
-  }
-
   const cards = Array.from(document.querySelectorAll(".card"));
   let openCard = null;
 
@@ -773,4 +767,5 @@
 
 </body>
 </html>
+
 
