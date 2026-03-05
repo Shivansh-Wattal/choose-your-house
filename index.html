@@ -362,10 +362,122 @@
       .card{ height: 440px; }
       .row{ grid-template-columns: 1fr; }
     }
+    /* ── Thank You Overlay ── */
+#thankyou-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(5, 5, 10, 0.92);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+#thankyou-box {
+  max-width: 440px;
+  width: 100%;
+  background: linear-gradient(160deg, rgba(255,255,255,0.07), rgba(0,0,0,0.4));
+  border: 1px solid rgba(255, 215, 80, 0.25);
+  border-radius: 24px;
+  padding: 44px 32px 40px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.7),
+              0 0 40px rgba(255, 210, 60, 0.08);
+  animation: slideUp 0.45s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.ty-icon {
+  font-size: 2.8rem;
+  color: var(--gold1);
+  filter: drop-shadow(0 0 12px rgba(255,210,60,0.6));
+  margin-bottom: 16px;
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(255,210,60,0.5)); }
+  50%       { filter: drop-shadow(0 0 22px rgba(255,210,60,0.9)); }
+}
+
+.ty-title {
+  font-family: 'HarryP', serif;
+  font-size: 2.4rem;
+  margin: 0 0 10px;
+  background: linear-gradient(180deg, #fff8dc, #f7d36a 40%, #caa03a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 6px rgba(255,210,60,0.4));
+}
+
+.ty-house {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 14px;
+  letter-spacing: 0.06em;
+}
+
+.ty-msg {
+  font-family: system-ui, sans-serif;
+  color: rgba(239, 231, 210, 0.75);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 0 0 20px;
+}
+
+.ty-divider {
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  color: rgba(247, 211, 106, 0.35);
+  margin-bottom: 24px;
+}
+
+.ty-btn {
+  padding: 12px 32px;
+  border: 0;
+  border-radius: 999px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(180deg, var(--gold1), var(--gold2));
+  color: #1b1408;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  transition: transform 0.15s;
+}
+
+.ty-btn:hover { transform: translateY(-2px); }
+
   </style>
 </head>
 
 <body>
+<!-- Thank you overlay -->
+<div id="thankyou-overlay" style="display:none;">
+  <div id="thankyou-box">
+    <div class="ty-icon">✦</div>
+    <h2 class="ty-title">Response Recorded</h2>
+    <p class="ty-house" id="ty-house-name"></p>
+    <p class="ty-msg">Your guess has been submitted.<br>May the best wizard win!</p>
+    <div class="ty-divider">⁕ ────── ✦ ────── ⁕</div>
+    <button class="ty-btn" onclick="closeOverlay()">Back to Houses</button>
+  </div>
+</div>
+
+  
   <div class="wrap">
     <header>
       <h1>Choose Your House</h1>
@@ -537,118 +649,128 @@
   </div>
 
   <script>
-    // Paste your Apps Script URL here
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvno4sxZbFccn1HYTeJZKyClxRpzfKiud5vD5f4DGpjdLCU0K6O5lVJcUGXxzXmIkvhw/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvno4sxZbFccn1HYTeJZKyClxRpzfKiud5vD5f4DGpjdLCU0K6O5lVJcUGXxzXmIkvhw/exec";
 
-    // Flip logic: only one open at a time; click outside closes
-    const cards = Array.from(document.querySelectorAll(".card"));
-    let openCard = null;
+  const HOUSE_COLORS = {
+    Gryffindor: '#ae0000',
+    Slytherin:  '#138701',
+    Ravenclaw:  '#0e54aa',
+    Hufflepuff: '#c79900',
+  };
 
-    function closeCard(card){
-      if(!card) return;
-      card.classList.remove("flipped");
-      openCard = null;
-    }
+  function showOverlay(house) {
+    const overlay  = document.getElementById('thankyou-overlay');
+    const houseTxt = document.getElementById('ty-house-name');
+    houseTxt.textContent  = house;
+    houseTxt.style.color  = HOUSE_COLORS[house] || 'var(--gold1)';
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
 
-    function openThis(card){
-      if(openCard && openCard !== card) closeCard(openCard);
-      card.classList.add("flipped");
-      openCard = card;
-      const firstInput = card.querySelector(".back input[name='gmail']");
-      if(firstInput) setTimeout(() => firstInput.focus(), 350);
-    }
+  function closeOverlay() {
+    document.getElementById('thankyou-overlay').style.display = 'none';
+    document.body.style.overflow = '';
+  }
 
-    cards.forEach(card => {
-      const inner = card.querySelector(".inner");
-      const front = card.querySelector(".front");
+  const cards = Array.from(document.querySelectorAll(".card"));
+  let openCard = null;
 
-      front.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if(card.classList.contains("flipped")) closeCard(card);
-        else openThis(card);
-      });
+  function closeCard(card) {
+    if (!card) return;
+    card.classList.remove("flipped");
+    openCard = null;
+  }
 
-      // prevent clicks inside back from flipping
-      inner.addEventListener("click", (e) => {
-        e.stopPropagation();
-      });
+  function openThis(card) {
+    if (openCard && openCard !== card) closeCard(openCard);
+    card.classList.add("flipped");
+    openCard = card;
+    const firstInput = card.querySelector(".back input[name='gmail']");
+    if (firstInput) setTimeout(() => firstInput.focus(), 350);
+  }
 
-      // Form handling
-      const form = card.querySelector("form");
-      const msg = card.querySelector(".msg");
-      const btn = form.querySelector("button");
+  cards.forEach(card => {
+    const front = card.querySelector(".front");
+    const inner = card.querySelector(".inner");
 
-      function setMsg(kind, text){
-        msg.className = "msg " + (kind === "ok" ? "ok" : "err");
-        msg.textContent = text;
-      }
-
-      function validGmail(g){
-        return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test((g || "").trim());
-      }
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        msg.style.display = "none";
-
-        const gmail = form.elements.gmail.value.trim();
-        const name  = (form.elements.name.value || "").trim();
-        const guess = form.elements.guess.value.trim();
-        const house = card.getAttribute("data-house");
-
-        if(!validGmail(gmail)){
-          setMsg("err", "Please enter a valid @gmail.com address.");
-          msg.style.display = "block";
-          form.elements.gmail.focus();
-          return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = "Submitting...";
-
-        const fd = new FormData();
-        fd.append("gmail", gmail);
-        fd.append("name", name);
-        fd.append("house", house);
-        fd.append("guess", guess);
-
-        try{
-          const res = await fetch(SCRIPT_URL, {
-  method: "POST",
-  body: fd,
-  mode: "no-cors",
-  redirect: "follow"
-});
-setMsg("ok", "Recorded. Good luck!");
-form.reset();
-          const text = await res.text();
-          let data = null;
-          try { data = JSON.parse(text); } catch(_){}
-
-          if(data && data.status === "success"){
-            setMsg("ok", data.message || "Recorded. Good luck!");
-            form.reset();
-          }else if(data && data.status === "error"){
-            setMsg("err", data.message || "Could not submit.");
-          }else{
-            // fallback if script returns non-JSON
-            setMsg("ok", "Recorded. Good luck!");
-            form.reset();
-          }
-        }catch(err){
-          setMsg("err", "Network error. Please try again.");
-        }finally{
-          msg.style.display = "block";
-          btn.disabled = false;
-          btn.textContent = "Submit";
-        }
-      });
+    front.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (card.classList.contains("flipped")) closeCard(card);
+      else openThis(card);
     });
 
-    document.body.addEventListener("click", () => closeCard(openCard));
+    inner.addEventListener("click", (e) => { e.stopPropagation(); });
 
-    // Helpful console hint if images fail
-    // If you see 404s: ensure assets/ folder + correct filenames
-  </script>
+    const form = card.querySelector("form");
+    const msg  = card.querySelector(".msg");
+    const btn  = form.querySelector("button");
+
+    function setMsg(kind, text) {
+      msg.className     = "msg " + (kind === "ok" ? "ok" : "err");
+      msg.textContent   = text;
+      msg.style.display = "block";
+    }
+
+    function validGmail(g) {
+      return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test((g || "").trim());
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.style.display = "none";
+
+      const gmail = form.elements.gmail.value.trim();
+      const name  = (form.elements.name.value || "").trim();
+      const guess = form.elements.guess.value.trim();
+      const house = card.getAttribute("data-house");
+
+      if (!validGmail(gmail)) {
+        setMsg("err", "Please enter a valid @gmail.com address.");
+        form.elements.gmail.focus();
+        return;
+      }
+
+      btn.disabled    = true;
+      btn.textContent = "Submitting...";
+
+      const fd = new FormData();
+      fd.append("gmail", gmail);
+      fd.append("name",  name);
+      fd.append("house", house);
+      fd.append("guess", guess);
+
+      try {
+        const res  = await fetch(SCRIPT_URL, { method: "POST", body: fd });
+        const text = await res.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch (_) {}
+
+        if (data && data.status === "success") {
+          form.reset();
+          closeCard(card);
+          showOverlay(house);                          // ← show thank-you
+        } else if (data && data.status === "closed") {
+          setMsg("err", "The game has been closed. No more submissions.");
+        } else if (data && data.status === "error") {
+          setMsg("err", data.message || "Could not submit.");
+        } else {
+          // fallback (no-cors mode)
+          form.reset();
+          closeCard(card);
+          showOverlay(house);
+        }
+      } catch (err) {
+        setMsg("err", "Network error. Please try again.");
+      } finally {
+        btn.disabled    = false;
+        btn.textContent = "Submit";
+      }
+    });
+  });
+
+  document.body.addEventListener("click", () => closeCard(openCard));
+</script>
+
 </body>
 </html>
+
