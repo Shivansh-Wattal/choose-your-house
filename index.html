@@ -240,17 +240,21 @@
     }
 
     .btn{
-      margin-top: 6px;
-      border: 0;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor:pointer;
-      color:#1b1408;
-      background: linear-gradient(180deg, var(--gold1), var(--gold2));
-      box-shadow: 0 12px 24px rgba(0,0,0,0.35);
-    }
+  margin-top: 6px;
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor:pointer;
+  color: #fff;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent) 85%, white),
+    var(--accent)
+  );
+  box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+}
+
 
     .btn:disabled{ opacity:0.6; cursor: default; }
 
@@ -278,7 +282,7 @@
     .accent{
       position:absolute;
       top:0; left:0; right:0;
-      height: 7px;
+      height: 16px;
       background: var(--accent);
       box-shadow: 0 6px 14px rgba(0,0,0,0.25);
     }
@@ -294,7 +298,7 @@
   <div class="wrap">
     <header>
       <h1>Choose Your House</h1>
-      <div class="sub">Tap a house to enter your details and your guess.</div>
+      <div class="sub">Tap a house to make your choice.</div>
     </header>
 
     <main class="grid" id="grid">
@@ -310,7 +314,7 @@
             <p class="hint">Brave at heart</p>
             <div class="tap">Tap to choose</div>
           </div>
-
+ 
           <div class="face back">
             <div class="accent"></div>
             <h2>Gryffindor entry</h2>
@@ -322,8 +326,8 @@
 
               <div class="row">
                 <div>
-                  <label>Name (optional)</label>
-                  <input name="name" type="text" placeholder="Your name">
+                  <label>Name</label>
+                  <input name="name" type="text" placeholder="Your name" required>
                 </div>
                 <div>
                   <label>Your guess</label>
@@ -362,8 +366,8 @@
 
               <div class="row">
                 <div>
-                  <label>Name (optional)</label>
-                  <input name="name" type="text" placeholder="Your name">
+                  <label>Name</label>
+                  <input name="name" type="text" placeholder="Your name" required>
                 </div>
                 <div>
                   <label>Your guess</label>
@@ -379,7 +383,7 @@
       </section>
 
       <!-- Ravenclaw -->
-      <section class="card" data-house="Ravenclaw" style="--accent:#0E1A40;">
+      <section class="card" data-house="Ravenclaw" style="--accent:#0e54aa;">
         <div class="inner">
           <div class="face front">
             <div class="accent"></div>
@@ -402,8 +406,8 @@
 
               <div class="row">
                 <div>
-                  <label>Name (optional)</label>
-                  <input name="name" type="text" placeholder="Your name">
+                  <label>Name</label>
+                  <input name="name" type="text" placeholder="Your name" required>
                 </div>
                 <div>
                   <label>Your guess</label>
@@ -442,8 +446,8 @@
 
               <div class="row">
                 <div>
-                  <label>Name (optional)</label>
-                  <input name="name" type="text" placeholder="Your name">
+                  <label>Name</label>
+                  <input name="name" type="text" placeholder="Your name" required>
                 </div>
                 <div>
                   <label>Your guess</label>
